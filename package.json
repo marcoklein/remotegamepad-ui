@@ -1,0 +1,44 @@
+{
+  "name": "remotegamepad-ui",
+  "version": "0.0.1",
+  "description": "Standard User Interface for the Remote Gamepad API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "copyfiles -u 1 src/assets/* dist & parcel src/index.html --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcoklein/remotegamepad-ui.git"
+  },
+  "keywords": [
+    "Remote",
+    "Gamepad",
+    "Gamepad",
+    "API",
+    "User",
+    "Interface"
+  ],
+  "author": "Marco Klein",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/marcoklein/remotegamepad-ui/issues"
+  },
+  "homepage": "https://github.com/marcoklein/remotegamepad-ui#readme",
+  "dependencies": {
+    "remotegamepad": "^0.4.12",
+    "vue": "^2.6.10",
+    "vue-hot-reload-api": "^2.3.3"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^3.0.0",
+    "bootstrap": "^4.3.1",
+    "bootstrap-vue": "^2.0.0-rc.25",
+    "copyfiles": "^2.1.0",
+    "parcel-bundler": "^1.12.3",
+    "sass": "^1.22.3",
+    "typescript": "^3.5.2",
+    "vue-class-component": "^7.1.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}

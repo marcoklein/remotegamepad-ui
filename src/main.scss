@@ -1,0 +1,8 @@
+// include bootstrap
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+@import 'node_modules/bootstrap-vue/src/index.scss';
+// custom styles
+@import './styles/variables.scss';
+@import './styles/base.scss';
+@import './styles/scenes.scss';
+@import './styles/gamepad.scss';
