@@ -4,16 +4,42 @@
 <div class="fullsize">
     <div id="sceneGamepad" class="fullsize">
         <div id="gamepadLayoutDefault" class="fullsize">
+            <!--
             <div @mousedown="leftButtonMouseDown" @mousemove="leftButtonMouseMove" @mouseup="leftButtonMouseUp" class="gamepadButtonLeft d-flex flex-column justify-content-center text-left">
                 &lt;
             </div>
-            <div class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
+            <div v-bind:style="{ width: leftButtonWidth + '%'}" class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
                 &gt;
             </div>
             <div class="gamepadButtonA d-flex flex-column justify-content-center text-center">
                 A
             </div>
             <div class="gamepadButtonB d-flex flex-column justify-content-center text-center">
+                B
+            </div>-->
+
+            <div v-bind:style="{ width: (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) + '%', left: (50 - (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) / 2) + '%'}"
+                class="gamepadButtonStart d-flex flex-column justify-content-center text-right pr-4">
+                Start
+            </div>            
+            <div
+                v-bind:style="{ width: gamepadData.leftArea.divider + '%', left: 0 + '%', height: gamepadData.leftArea.height + '%'}"
+                @mousedown="leftButtonMouseDown" @mousemove="leftButtonMouseMove" @mouseup="leftButtonMouseUp" class="gamepadButtonLeft d-flex flex-column justify-content-center text-left">
+                &lt;
+            </div>
+            <div
+                v-bind:style="{ width: (gamepadData.leftArea.width - gamepadData.leftArea.divider) + '%', left: gamepadData.leftArea.divider + '%', height: gamepadData.leftArea.height + '%'}"
+                class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
+                &gt;
+            </div>
+            <div 
+                v-bind:style="{ width: gamepadData.rightArea.width + '%', bottom: 0 + '%', height: gamepadData.rightArea.divider + '%'}"
+                class="gamepadButtonA d-flex flex-column justify-content-center text-center">
+                A
+            </div>
+            <div 
+                v-bind:style="{ width: gamepadData.rightArea.width + '%', bottom: gamepadData.rightArea.divider + '%', height: (gamepadData.rightArea.height - gamepadData.rightArea.divider) + '%'}"
+                class="gamepadButtonB d-flex flex-column justify-content-center text-center">
                 B
             </div>
         </div>
@@ -62,6 +88,14 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { RemoteGamepadClient } from 'remotegamepad/client';
 
+type Area = {
+    width: number,
+    height: number,
+    /**
+     * Either a horizontal or vertical divider.
+     */
+    divider: number
+}
 
 @Component
 export default class App extends Vue {
@@ -81,6 +115,22 @@ export default class App extends Vue {
     connectionError: string = null;
 
     showConnectionCodeModal: boolean = true;
+
+    gamepadData: {
+        leftArea: Area;
+        rightArea: Area;
+    } = {
+        leftArea: {
+            width: 40,
+            height: 80,
+            divider: 30
+        },
+        rightArea: {
+            width: 40,
+            height: 80,
+            divider: 30
+        }
+    };
 
 
     mounted() {

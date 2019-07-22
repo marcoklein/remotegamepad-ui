@@ -17,8 +17,8 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: $directionButtonWidth;
-        height: $directionButtonHeight;
+        width: $leftAreaWidth;
+        height: $leftAreaHeight;
         background-color: #AAA;
 
     }
@@ -26,9 +26,9 @@
     .gamepadButtonRight {
         position: absolute;
         bottom: 0;
-        left: $directionButtonWidth;
-        width: $directionButtonWidth;
-        height: $directionButtonHeight;
+        //left: $leftAreaWidth;
+        //width: $leftAreaWidth;
+        //height: $leftAreaHeight;
         background-color: #AAA;
 
         margin-left: $buttonMargin;
@@ -45,8 +45,8 @@
         position: absolute;
         right: 0;
         bottom: 0;
-        width: $actionButtonWidth;
-        height: $actionButtonHeight;
+        width: $rightAreaWidth;
+        height: $rightAreaHeight;
         background-color: green;
     }
 
@@ -54,11 +54,21 @@
     .gamepadButtonB {
         position: absolute;
         right: 0;
-        bottom: $actionButtonHeight;
-        width: $actionButtonWidth;
-        height: $actionButtonHeight;
+        bottom: $rightAreaHeight;
+        width: $rightAreaWidth;
+        height: $rightAreaHeight;
         background-color: yellow;
 
         margin-bottom: $buttonMargin;
+    }
+
+    .gamepadButtonStart {
+        position: absolute;
+        left: 50%;
+        width: 20%;
+        //top: 50%;
+        bottom: 0%;
+        height: 30%;
+        background-color: lightblue;
     }
 }
