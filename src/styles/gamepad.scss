@@ -12,6 +12,7 @@
     -ms-user-select: none;  /* IE 10+ */
     user-select: none;  /* Likely future */ 
     
+
     /* Direction Buttons */
     .gamepadButtonLeft {
         position: absolute;
@@ -20,7 +21,10 @@
         width: $leftAreaWidth;
         height: $leftAreaHeight;
         background-color: #AAA;
-
+        
+        &.pressed {
+            background-color: #F00;
+        }
     }
 
     .gamepadButtonRight {
@@ -32,6 +36,10 @@
         background-color: #AAA;
 
         margin-left: $buttonMargin;
+        
+        &.pressed {
+            background-color: #F00;
+        }
     }
 
     /* Action Buttons */
@@ -48,6 +56,10 @@
         width: $rightAreaWidth;
         height: $rightAreaHeight;
         background-color: green;
+        
+        &.pressed {
+            background-color: #F00;
+        }
     }
 
     // above buttonA
@@ -60,6 +72,10 @@
         background-color: yellow;
 
         margin-bottom: $buttonMargin;
+        
+        &.pressed {
+            background-color: #F00;
+        }
     }
 
     .gamepadButtonStart {
@@ -69,6 +85,11 @@
         //top: 50%;
         bottom: 0%;
         height: 30%;
+        text-align: center;
         background-color: lightblue;
+
+        &.pressed {
+            background-color: #F00;
+        }
     }
 }

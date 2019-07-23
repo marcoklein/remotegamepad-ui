@@ -2,42 +2,40 @@
 <template>
 
 <div class="fullsize">
-    <div id="sceneGamepad" class="fullsize">
-        <div id="gamepadLayoutDefault" class="fullsize">
-            <!--
-            <div @mousedown="leftButtonMouseDown" @mousemove="leftButtonMouseMove" @mouseup="leftButtonMouseUp" class="gamepadButtonLeft d-flex flex-column justify-content-center text-left">
-                &lt;
-            </div>
-            <div v-bind:style="{ width: leftButtonWidth + '%'}" class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
-                &gt;
-            </div>
-            <div class="gamepadButtonA d-flex flex-column justify-content-center text-center">
-                A
-            </div>
-            <div class="gamepadButtonB d-flex flex-column justify-content-center text-center">
-                B
-            </div>-->
+    <div id="sceneGamepad" class="fullsize" v-if="gamepadButtons">
+        <div id="gamepadLayoutDefault" class="fullsize"
+            @touchstart="touchStart" @touchmove="touchMoving" @touchend="touchEnd"
+            @mousedown="leftButtonMouseDown" @mousemove="leftButtonMouseMove" @mouseup="leftButtonMouseUp"
+        >
 
-            <div v-bind:style="{ width: (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) + '%', left: (50 - (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) / 2) + '%'}"
+            <div gamepad-button="9"
+                v-bind:class="{ pressed: (gamepadButtons[9].pressed) }"
+                v-bind:style="{ width: (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) + '%', left: (50 - (100 - gamepadData.leftArea.width - gamepadData.rightArea.width) / 2) + '%'}"
                 class="gamepadButtonStart d-flex flex-column justify-content-center text-right pr-4">
                 Start
-            </div>            
-            <div
+            </div>
+            <!-- 
+                v-touch:start.self="touchStart" v-touch:end.self="touchEnd" v-touch:moving.self="touchMoving" -->
+            <div gamepad-button="14"
+                v-bind:class="{ pressed: (gamepadButtons[14].pressed) }"
                 v-bind:style="{ width: gamepadData.leftArea.divider + '%', left: 0 + '%', height: gamepadData.leftArea.height + '%'}"
-                @mousedown="leftButtonMouseDown" @mousemove="leftButtonMouseMove" @mouseup="leftButtonMouseUp" class="gamepadButtonLeft d-flex flex-column justify-content-center text-left">
+                class="gamepadButtonLeft d-flex flex-column justify-content-center text-left">
                 &lt;
             </div>
-            <div
+            <div gamepad-button="15" 
+                v-bind:class="{ pressed: (gamepadButtons[15].pressed) }"
                 v-bind:style="{ width: (gamepadData.leftArea.width - gamepadData.leftArea.divider) + '%', left: gamepadData.leftArea.divider + '%', height: gamepadData.leftArea.height + '%'}"
                 class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
                 &gt;
             </div>
-            <div 
+            <div gamepad-button="0" 
+                v-bind:class="{ pressed: (gamepadButtons[0].pressed) }"
                 v-bind:style="{ width: gamepadData.rightArea.width + '%', bottom: 0 + '%', height: gamepadData.rightArea.divider + '%'}"
                 class="gamepadButtonA d-flex flex-column justify-content-center text-center">
                 A
             </div>
-            <div 
+            <div gamepad-button="1" 
+                v-bind:class="{ pressed: (gamepadButtons[1].pressed) }"
                 v-bind:style="{ width: gamepadData.rightArea.width + '%', bottom: gamepadData.rightArea.divider + '%', height: (gamepadData.rightArea.height - gamepadData.rightArea.divider) + '%'}"
                 class="gamepadButtonB d-flex flex-column justify-content-center text-center">
                 B
@@ -132,8 +130,48 @@ export default class App extends Vue {
         }
     };
 
+    /**
+     * Gamepad buttons array.
+     * The ids follow the official WC3 guideline:
+     * https://www.w3.org/TR/gamepad/#gamepad-interface
+     */
+    gamepadButtons: {
+        pressed: boolean
+    }[] = null;
+
+    /**
+     * Array with all previous touches.
+     * Each touch has a unique identifier, directly mapped to a certain button id.
+     */
+    lastButtonTouches: {[key: number]: number} = {};
+
+    created() {
+        this.initGamepadState();
+    }
 
     mounted() {
+        //this.initGamepadState();
+    }
+    
+    /**
+     * Init all needed gamepad buttons.
+     */
+    private initGamepadState() {
+        this.gamepadButtons = [];
+        for (let i = 0; i < 16; i++) {
+            this.gamepadButtons.push({
+                pressed: false
+            });
+        } 
+    }
+
+    /**
+     * Loops through all gamepad buttons and sets pressed to false.
+     */
+    private resetGamepadButtons() {
+        for (let i = 0; i < this.gamepadButtons.length; i++) {
+            this.gamepadButtons[i].pressed = false;
+        }
     }
 
     onConnectButtonClick() {
@@ -165,6 +203,60 @@ export default class App extends Vue {
     leftButtonMouseUp() {
         console.log('mouse up left');
     }
+
+    touchStart(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
+        }
+    }
+
+    touchEnd(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerUp(touch.identifier);
+        }
+    }
+
+    touchMoving(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
+        }
+    }
+
+    handlePointerDown(x: number, y: number, identifier: number) {
+        // find touched element
+        let element = document.elementFromPoint(x, y);
+        // extract button info
+        let gamepadButton = !element ? null : element.getAttribute('gamepad-button');
+
+        // uncheck the last button if existing
+        let lastButton = this.lastButtonTouches[identifier];
+        if (lastButton >= 0) {
+            this.gamepadButtons[lastButton].pressed = false;
+        } // else, lastButton is null or undefined
+
+        if (gamepadButton) {
+            // mark button as pressed
+            this.gamepadButtons[gamepadButton].pressed = true;
+            // set last button in map
+            this.lastButtonTouches[identifier] = Number.parseInt(gamepadButton);
+        }
+    }
+
+    handlePointerUp(identifier: number) {
+        // uncheck the last button if existing
+        let lastButton = this.lastButtonTouches[identifier];
+        if (lastButton >= 0) {
+            this.gamepadButtons[lastButton].pressed = false;
+        } // else, lastButton is null or undefined
+    }
+
+
 
 
 }
