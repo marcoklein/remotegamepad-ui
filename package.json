@@ -27,8 +27,7 @@
   "homepage": "https://github.com/marcoklein/remotegamepad-ui#readme",
   "dependencies": {
     "remotegamepad": "^0.4.12",
-    "vue": "^2.6.10",
-    "vue2-touch-events": "^2.0.0"
+    "vue": "^2.6.10"
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "^3.0.0",
