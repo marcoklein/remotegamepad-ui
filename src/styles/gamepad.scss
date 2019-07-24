@@ -12,6 +12,40 @@
     -ms-user-select: none;  /* IE 10+ */
     user-select: none;  /* Likely future */ 
     
+    /* General Buttons */
+    .gamepadButtonStart {
+        position: absolute;
+        left: 50%;
+        width: 20%;
+        //top: 50%;
+        bottom: 0%;
+        height: 30%;
+        text-align: center;
+        background-color: lightblue;
+
+        &.pressed {
+            background-color: #F00;
+        }
+    }
+
+    /* Size Slider */
+    .dividerSlider {
+        position: absolute;
+        width: 2em;
+        height: 2em;
+        background-color: #22F;
+        z-index: 1000;
+
+        &.leftSlider {
+            /* Center divider */
+            margin-left: -1em;
+        }
+        &.rightSlider {
+            /* Center divider */
+            margin-bottom: -1em;
+        }
+
+    }
 
     /* Direction Buttons */
     .gamepadButtonLeft {
@@ -78,18 +112,4 @@
         }
     }
 
-    .gamepadButtonStart {
-        position: absolute;
-        left: 50%;
-        width: 20%;
-        //top: 50%;
-        bottom: 0%;
-        height: 30%;
-        text-align: center;
-        background-color: lightblue;
-
-        &.pressed {
-            background-color: #F00;
-        }
-    }
 }

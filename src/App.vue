@@ -14,8 +14,10 @@
                 class="gamepadButtonStart d-flex flex-column justify-content-center text-right pr-4">
                 Start
             </div>
-            <!-- 
-                v-touch:start.self="touchStart" v-touch:end.self="touchEnd" v-touch:moving.self="touchMoving" -->
+            
+            <div class="dividerSlider leftSlider"
+                v-bind:style="{left: gamepadData.leftArea.divider + '%', bottom: (gamepadData.leftArea.height * 0.8) + '%'}">
+            </div>
             <div gamepad-button="14"
                 v-bind:class="{ pressed: (gamepadButtons[14].pressed) }"
                 v-bind:style="{ width: gamepadData.leftArea.divider + '%', left: 0 + '%', height: gamepadData.leftArea.height + '%'}"
@@ -27,6 +29,10 @@
                 v-bind:style="{ width: (gamepadData.leftArea.width - gamepadData.leftArea.divider) + '%', left: gamepadData.leftArea.divider + '%', height: gamepadData.leftArea.height + '%'}"
                 class="gamepadButtonRight d-flex flex-column justify-content-center text-right pr-4">
                 &gt;
+            </div>
+
+            <div class="dividerSlider rightSlider"
+                v-bind:style="{bottom: gamepadData.rightArea.divider + '%', right: (gamepadData.rightArea.width * 0.8) + '%'}">
             </div>
             <div gamepad-button="0" 
                 v-bind:class="{ pressed: (gamepadButtons[0].pressed) }"
