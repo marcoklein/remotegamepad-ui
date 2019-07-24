@@ -16,6 +16,7 @@
             </div>
             
             <div class="dividerSlider leftSlider"
+                @touchstart="leftDividerTouchStart" @touchmove="leftDividerTouchMove" @touchend="leftDividerTouchEnd"
                 v-bind:style="{left: gamepadData.leftArea.divider + '%', bottom: (gamepadData.leftArea.height * 0.8) + '%'}">
             </div>
             <div gamepad-button="14"
@@ -266,8 +267,37 @@ export default class App extends Vue {
         } // else, lastButton is null or undefined
     }
 
+    /* Left Divider Touch Events */
 
+    leftDividerTouchStartX: number;
 
+    leftDividerTouchStart(event: TouchEvent) {
+        event.preventDefault();
+        console.log('left divider touch start');
+
+        this.leftDividerTouchStartX = event.changedTouches[0].screenX;
+    }
+
+    leftDividerTouchMove(event: TouchEvent) {
+        event.preventDefault();
+        console.log('left divider touch move');
+        let absoluteDelta = event.changedTouches[0].screenX - this.leftDividerTouchStartX;
+        this.leftDividerTouchStartX = event.changedTouches[0].screenX;
+        // calculate movement percentage
+        console.log(document.body.clientWidth);
+        let absoluteLeftAreaWidth = document.body.clientWidth * (this.gamepadData.leftArea.width / 100);
+
+        let percentageDelta = absoluteDelta / absoluteLeftAreaWidth;
+        console.log(absoluteDelta, absoluteLeftAreaWidth, percentageDelta);
+
+        // why times 50? -> somewhere we have an doubled amount
+        this.gamepadData.leftArea.divider += percentageDelta * 50;
+    }
+
+    leftDividerTouchEnd(event: TouchEvent) {
+        event.preventDefault();
+        console.log('left divider touch end');
+    }
 
 }
 
