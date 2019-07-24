@@ -194,14 +194,18 @@ export default class App extends Vue {
         this.showConnectingModal = true;
     }
 
-    leftButtonMouseDown() {
-        console.log('mouse down left');
+    leftButtonMouseDown(event: MouseEvent) {
+        this.handlePointerDown(event.clientX, event.clientY, 0);
     }
-    leftButtonMouseMove() {
-        console.log('mouse move left');
+
+    leftButtonMouseMove(event: MouseEvent) {
+        if (event.which >= 1) {
+            console.log(event.which);
+            this.handlePointerDown(event.clientX, event.clientY, 0);
+        }
     }
     leftButtonMouseUp() {
-        console.log('mouse up left');
+        this.handlePointerUp(0);
     }
 
     touchStart(event: TouchEvent) {
