@@ -33,6 +33,7 @@
             </div>
 
             <div class="dividerSlider rightSlider"
+                @touchstart="rightDividerTouchStart" @touchmove="rightDividerTouchMove"
                 v-bind:style="{bottom: gamepadData.rightArea.divider + '%', right: (gamepadData.rightArea.width * 0.8) + '%'}">
             </div>
             <div gamepad-button="0" 
@@ -154,10 +155,6 @@ export default class App extends Vue {
 
     created() {
         this.initGamepadState();
-    }
-
-    mounted() {
-        //this.initGamepadState();
     }
     
     /**
@@ -304,6 +301,46 @@ export default class App extends Vue {
             this.gamepadData.leftArea.divider = this.gamepadData.leftArea.width * 0.1;
         } else if (this.gamepadData.leftArea.divider > this.gamepadData.leftArea.width * 0.9) {
             this.gamepadData.leftArea.divider = this.gamepadData.leftArea.width * 0.9;
+        }
+    }
+
+    /* Right Divider Touch Events */
+
+    /**
+     * Store the position of the left divider on touch start.
+     */
+    rightDividerTouchStartY: number;
+    /**
+     * Store the relative position of the left divider on touch start.
+     */
+    rightDividerTouchStartValue: number;
+
+    /**
+     * Left divider is touched.
+     */
+    rightDividerTouchStart(event: TouchEvent) {
+        event.preventDefault();
+        // only change position with first (0) touch pointer
+        this.rightDividerTouchStartY = event.changedTouches[0].clientY;
+        this.rightDividerTouchStartValue = this.gamepadData.rightArea.divider;
+    }
+
+    /**
+     * The touch position of the divider has moved.
+     */
+    rightDividerTouchMove(event: TouchEvent) {
+        event.preventDefault();
+        // calculate absolute screen positions to map absolute to relative position
+        let absoluteDelta = event.changedTouches[0].clientY - this.rightDividerTouchStartY;
+        let percentageDelta = absoluteDelta / document.body.clientHeight * 100;
+        // calculate new divider position
+        this.gamepadData.rightArea.divider = this.rightDividerTouchStartValue - percentageDelta;
+
+        // apply min and max percentages
+        if (this.gamepadData.rightArea.divider < this.gamepadData.rightArea.height * 0.1) {
+            this.gamepadData.rightArea.divider = this.gamepadData.rightArea.height * 0.1;
+        } else if (this.gamepadData.rightArea.divider > this.gamepadData.rightArea.height * 0.9) {
+            this.gamepadData.rightArea.divider = this.gamepadData.rightArea.height * 0.9;
         }
     }
 
