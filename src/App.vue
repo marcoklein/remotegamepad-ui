@@ -16,7 +16,7 @@
             </div>
             
             <div class="dividerSlider leftSlider"
-                @touchstart="leftDividerTouchStart" @touchmove="leftDividerTouchMove" @touchend="leftDividerTouchEnd"
+                @touchstart="leftDividerTouchStart" @touchmove="leftDividerTouchMove"
                 v-bind:style="{left: gamepadData.leftArea.divider + '%', bottom: (gamepadData.leftArea.height * 0.8) + '%'}">
             </div>
             <div gamepad-button="14"
@@ -269,34 +269,42 @@ export default class App extends Vue {
 
     /* Left Divider Touch Events */
 
+    /**
+     * Store the position of the left divider on touch start.
+     */
     leftDividerTouchStartX: number;
+    /**
+     * Store the relative position of the left divider on touch start.
+     */
+    leftDividerTouchStartValue: number;
 
+    /**
+     * Left divider is touched.
+     */
     leftDividerTouchStart(event: TouchEvent) {
         event.preventDefault();
-        console.log('left divider touch start');
-
-        this.leftDividerTouchStartX = event.changedTouches[0].screenX;
+        // only change position with first (0) touch pointer
+        this.leftDividerTouchStartX = event.changedTouches[0].clientX;
+        this.leftDividerTouchStartValue = this.gamepadData.leftArea.divider;
     }
 
+    /**
+     * The touch position of the divider has moved.
+     */
     leftDividerTouchMove(event: TouchEvent) {
         event.preventDefault();
-        console.log('left divider touch move');
-        let absoluteDelta = event.changedTouches[0].screenX - this.leftDividerTouchStartX;
-        this.leftDividerTouchStartX = event.changedTouches[0].screenX;
-        // calculate movement percentage
-        console.log(document.body.clientWidth);
-        let absoluteLeftAreaWidth = document.body.clientWidth * (this.gamepadData.leftArea.width / 100);
+        // calculate absolute screen positions to map absolute to relative position
+        let absoluteDelta = event.changedTouches[0].clientX - this.leftDividerTouchStartX;
+        let percentageDelta = absoluteDelta / document.body.clientWidth * 100;
+        // calculate new divider position
+        this.gamepadData.leftArea.divider = this.leftDividerTouchStartValue + percentageDelta;
 
-        let percentageDelta = absoluteDelta / absoluteLeftAreaWidth;
-        console.log(absoluteDelta, absoluteLeftAreaWidth, percentageDelta);
-
-        // why times 50? -> somewhere we have an doubled amount
-        this.gamepadData.leftArea.divider += percentageDelta * 50;
-    }
-
-    leftDividerTouchEnd(event: TouchEvent) {
-        event.preventDefault();
-        console.log('left divider touch end');
+        // apply min and max percentages
+        if (this.gamepadData.leftArea.divider < this.gamepadData.leftArea.width * 0.1) {
+            this.gamepadData.leftArea.divider = this.gamepadData.leftArea.width * 0.1;
+        } else if (this.gamepadData.leftArea.divider > this.gamepadData.leftArea.width * 0.9) {
+            this.gamepadData.leftArea.divider = this.gamepadData.leftArea.width * 0.9;
+        }
     }
 
 }
