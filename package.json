@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:docs": "rimraf docs/**/* && copyfiles -u 1 src/assets/* docs & parcel build src/index.html -d docs --public-url ./ --out-file index.html --no-source-maps",
-    "dev": "copyfiles -u 1 src/assets/* dist & parcel src/index.html --open"
+    "build": "rimraf docs/**/* && copyfiles -u 1 src/assets/* docs & parcel build src/index.html -d docs --public-url ./ --out-file index.html --no-source-maps",
+    "dev": "copyfiles -u 1 src/assets/* dist & parcel src/index.html --open",
+    "version": "npm run build && git add -A docs src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
