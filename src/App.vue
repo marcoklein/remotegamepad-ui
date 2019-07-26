@@ -188,6 +188,8 @@ export default class App extends Vue {
         // connect
         this.client.connect(connectionCode).then((client) => {
             console.log('Connection successfull.');
+            // hide connection modal
+            this.showConnectionCodeModal = false;
         }).catch((error) => {
             console.error('Error on connection: ', error);
             this.showConnectionErrorAlert = true;
@@ -198,44 +200,21 @@ export default class App extends Vue {
         this.showConnectingModal = true;
     }
 
-    leftButtonMouseDown(event: MouseEvent) {
-        this.handlePointerDown(event.clientX, event.clientY, 0);
+    /**
+     * Called by the pointer down and up functions as the state of a button is altered.
+     */
+    changeButtonState(buttonId: number, pressed: boolean) {
+        this.gamepadButtons[buttonId].pressed = pressed;
+        this.client.sendMessage('buttonUpdate', {
+            index: buttonId,
+            pressed: pressed
+        });
     }
 
-    leftButtonMouseMove(event: MouseEvent) {
-        if (event.which >= 1) {
-            console.log(event.which);
-            this.handlePointerDown(event.clientX, event.clientY, 0);
-        }
-    }
-    leftButtonMouseUp() {
-        this.handlePointerUp(0);
-    }
-
-    touchStart(event: TouchEvent) {
-        event.preventDefault();
-        for (let i = 0; i < event.changedTouches.length; i++) {
-            let touch = event.changedTouches[i];
-            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
-        }
-    }
-
-    touchEnd(event: TouchEvent) {
-        event.preventDefault();
-        for (let i = 0; i < event.changedTouches.length; i++) {
-            let touch = event.changedTouches[i];
-            this.handlePointerUp(touch.identifier);
-        }
-    }
-
-    touchMoving(event: TouchEvent) {
-        event.preventDefault();
-        for (let i = 0; i < event.changedTouches.length; i++) {
-            let touch = event.changedTouches[i];
-            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
-        }
-    }
-
+    /**
+     * Called as a touch, mouse down, touch move, or mouse move event occurs.
+     * Handles and updates the pressed state of all buttons.
+     */
     handlePointerDown(x: number, y: number, identifier: number) {
         // find touched element
         let element = document.elementFromPoint(x, y);
@@ -245,22 +224,26 @@ export default class App extends Vue {
         // uncheck the last button if existing
         let lastButton = this.lastButtonTouches[identifier];
         if (lastButton >= 0) {
-            this.gamepadButtons[lastButton].pressed = false;
+            this.changeButtonState(lastButton, false);
         } // else, lastButton is null or undefined
 
         if (gamepadButton) {
             // mark button as pressed
-            this.gamepadButtons[gamepadButton].pressed = true;
+            let gamepadButtonInt = Number.parseInt(gamepadButton);
+            this.changeButtonState(gamepadButtonInt, true);
             // set last button in map
-            this.lastButtonTouches[identifier] = Number.parseInt(gamepadButton);
+            this.lastButtonTouches[identifier] = gamepadButtonInt;
         }
     }
 
+    /**
+     * Mouse or touch as been released.
+     */
     handlePointerUp(identifier: number) {
         // uncheck the last button if existing
         let lastButton = this.lastButtonTouches[identifier];
         if (lastButton >= 0) {
-            this.gamepadButtons[lastButton].pressed = false;
+            this.changeButtonState(lastButton, false);
         } // else, lastButton is null or undefined
     }
 
@@ -341,6 +324,46 @@ export default class App extends Vue {
             this.gamepadData.rightArea.divider = this.gamepadData.rightArea.height * 0.1;
         } else if (this.gamepadData.rightArea.divider > this.gamepadData.rightArea.height * 0.9) {
             this.gamepadData.rightArea.divider = this.gamepadData.rightArea.height * 0.9;
+        }
+    }
+
+
+    /** Touch and Mouse event helper */
+
+    leftButtonMouseDown(event: MouseEvent) {
+        this.handlePointerDown(event.clientX, event.clientY, 0);
+    }
+
+    leftButtonMouseMove(event: MouseEvent) {
+        if (event.which >= 1) {
+            this.handlePointerDown(event.clientX, event.clientY, 0);
+        }
+    }
+    leftButtonMouseUp() {
+        this.handlePointerUp(0);
+    }
+
+    touchStart(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
+        }
+    }
+
+    touchEnd(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerUp(touch.identifier);
+        }
+    }
+
+    touchMoving(event: TouchEvent) {
+        event.preventDefault();
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = event.changedTouches[i];
+            this.handlePointerDown(touch.pageX, touch.pageY, touch.identifier);
         }
     }
 
