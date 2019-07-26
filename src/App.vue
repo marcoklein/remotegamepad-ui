@@ -143,7 +143,7 @@ export default class App extends Vue {
         leftArea: {
             width: 40,
             height: 100,
-            divider: 30
+            divider: 20
         },
         rightArea: {
             width: 40,
