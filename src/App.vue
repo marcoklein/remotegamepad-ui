@@ -253,7 +253,7 @@ export default class App extends Vue {
 
         // uncheck the last button if existing
         let lastButton = this.lastButtonTouches[identifier];
-        if (lastButton >= 0) {
+        if (lastButton >= 0 && gamepadButton && lastButton != Number.parseInt(gamepadButton)) {
             this.changeButtonState(lastButton, false);
         } // else, lastButton is null or undefined
 
