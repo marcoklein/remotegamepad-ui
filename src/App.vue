@@ -51,6 +51,11 @@
         </div>
     </div>
 
+    
+    <button id="fullscreenButton" type="button" v-on:click="toggleFullscreen" v-if="fullscreenEnabled && !isFullscreen">
+        <img src="./assets/buttonExpand.png">
+    </button>
+
     <div>
         <b-modal id="connectionCodeModal" size="xl" variant="primary" v-model="showConnectionCodeModal" title="Connect to the Game"  ><!-- ok-disabled cancel-disabled no-close-on-esc no-close-on-backdrop hide-header-close hide-footer-->
             <h3 class="mt-5 mb-2">Enter the Connection Code</h3>
@@ -93,6 +98,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { RemoteGamepadClient } from 'remotegamepad/client';
+import screenfull, { Screenfull } from 'screenfull';
+let fullscreenPlugin: Screenfull = <Screenfull> screenfull;
 
 type Area = {
     width: number,
@@ -128,12 +135,12 @@ export default class App extends Vue {
     } = {
         leftArea: {
             width: 40,
-            height: 80,
+            height: 100,
             divider: 30
         },
         rightArea: {
             width: 40,
-            height: 80,
+            height: 100,
             divider: 30
         }
     };
@@ -153,8 +160,20 @@ export default class App extends Vue {
      */
     lastButtonTouches: {[key: number]: number} = {};
 
+    /* Fullscreen */
+    fullscreenEnabled = fullscreenPlugin.enabled;
+    isFullscreen = fullscreenPlugin.isFullscreen;
+
+    beforeCreate() {
+        // change listener of fullscreen plugin
+        fullscreenPlugin.on('change', () => {
+            this.$data.isFullscreen = fullscreenPlugin.isFullscreen;
+        });
+    }
+
     created() {
         this.initGamepadState();
+        
     }
     
     /**
@@ -179,6 +198,8 @@ export default class App extends Vue {
     }
 
     onConnectButtonClick() {
+        //this.activateFullscreen();
+
         let connectionCode = this.connectionCode;
         if (connectionCode.trim().length <= 0) {
             // no empty connection codes
@@ -205,10 +226,12 @@ export default class App extends Vue {
      */
     changeButtonState(buttonId: number, pressed: boolean) {
         this.gamepadButtons[buttonId].pressed = pressed;
-        this.client.sendMessage('buttonUpdate', {
-            index: buttonId,
-            pressed: pressed
-        });
+        if (this.client.connection) {
+            this.client.sendMessage('buttonUpdate', {
+                index: buttonId,
+                pressed: pressed
+            });
+        }
     }
 
     /**
@@ -245,6 +268,23 @@ export default class App extends Vue {
         if (lastButton >= 0) {
             this.changeButtonState(lastButton, false);
         } // else, lastButton is null or undefined
+    }
+
+    
+    /**
+     * Use screenfull.js to toggle fullscreen if available.
+     */
+    toggleFullscreen() {
+        fullscreenPlugin.toggle();
+    }
+
+    /**
+     * Request fullscreen mode.
+     */
+    activateFullscreen() {
+        if (this.fullscreenEnabled && !this.isFullscreen) {
+            fullscreenPlugin.request();
+        }
     }
 
     /* Left Divider Touch Events */
@@ -373,5 +413,4 @@ export default class App extends Vue {
 </script>
 
 <style>
-
 </style>
