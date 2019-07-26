@@ -13,17 +13,10 @@ html, body {
     height: 100%;
 }
 
-
-#overlayContainer {
+#pingText {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    /* Click through container */
-    pointer-events: none;
-}
-#overlayContainer > * {
-    /* Default click behavior for childs. */
-    pointer-events: initial;
+    top: 16px;
+    left: 50%;
 }
 /* Show fullscreenButton on top */
 #fullscreenButton {

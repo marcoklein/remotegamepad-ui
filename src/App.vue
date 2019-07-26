@@ -55,6 +55,10 @@
     <button id="fullscreenButton" type="button" v-on:click="toggleFullscreen" v-if="fullscreenEnabled && !isFullscreen">
         <img src="./assets/buttonExpand.png">
     </button>
+    
+    <h3 id="pingText">
+        {{ client.lastPing }}
+    </h3>
 
     <div>
         <b-modal id="connectionCodeModal" size="xl" variant="primary" v-model="showConnectionCodeModal" title="Connect to the Game"  ><!-- ok-disabled cancel-disabled no-close-on-esc no-close-on-backdrop hide-header-close hide-footer-->
