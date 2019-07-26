@@ -1,6 +1,6 @@
 {
   "name": "remotegamepad-ui",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Standard User Interface for the Remote Gamepad API.",
   "main": "index.js",
   "scripts": {
